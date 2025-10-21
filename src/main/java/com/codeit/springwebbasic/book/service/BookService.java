@@ -16,12 +16,13 @@ public class BookService {
 
     private BookRepository bookRepository;
 
-    public void createBook(BookCreatRequestDto requestDto) {
+    public Book createBook(BookCreatRequestDto requestDto) {
         // ISBN 중복 검사
         Optional<Book> byIsbn = bookRepository.findByIsbn(requestDto.getIsbn());
         if(byIsbn.isPresent()) {
-            throw new IllegalArgumentException("이미 존재하는 ISBN입니다." + requestDto.getIsbn() ); // 에러 던지기
+            throw new IllegalArgumentException("이미 등록된 ISBN입니다." + requestDto.getIsbn() ); // 에러 던지기
         }
+
 
 
         // AllArgsConstructor가 있어서 하나하나 생성자 만들 필요 없음

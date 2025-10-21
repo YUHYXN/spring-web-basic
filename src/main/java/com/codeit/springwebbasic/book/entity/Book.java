@@ -21,10 +21,6 @@ public class Book {
     // 나중에 DB를 사용하면 status 값도 DB에 저장될 것이기에
     // 밑에 2개의 메서드는 사라지게 될 것이다.
 
-    public void Builder(){
-
-    }
-
 
     public void rentOut() {
         if(this.status != BookStatus.AVAILABEL) {

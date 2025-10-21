@@ -21,13 +21,13 @@ public class BookRepository {
     private final AtomicLong sequence = new AtomicLong(1);
 
     // 도서 저장
-//    public Book save(Book book) {
-//        if(book.getId() == null){
-//            book.setId(sequence.getAndIncrement()); // 값을 얻고난 후 값을 하나 증가
-//        }
-//        store.put(book.getId(), book);
-//        return book;
-//    }
+    public Book save(Book book) {
+        if(book.getId() == null){
+            book.setId(sequence.getAndIncrement()); // 값을 얻고난 후 값을 하나 증가
+        }
+        store.put(book.getId(), book);
+        return book;
+    }
 
     // 도서 조회
     public List<Book> findAll() {

@@ -1,6 +1,8 @@
 package com.codeit.springwebbasic.book.controller;
 
 import com.codeit.springwebbasic.book.dto.request.BookCreatRequestDto;
+import com.codeit.springwebbasic.book.dto.response.BookResponseDto;
+import com.codeit.springwebbasic.book.entity.Book;
 import com.codeit.springwebbasic.book.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +26,10 @@ public class BookController {
      * }
      *
      * */
-    public void createBook(@Valid @RequestBody BookCreatRequestDto requestDto) {
+    public BookResponseDto createBook(@Valid @RequestBody BookCreatRequestDto requestDto) {
 
-        bookService.createBook(requestDto);
-
+        Book book = bookService.createBook(requestDto);
+        return BookResponseDto.from(book);
 
     }
 
