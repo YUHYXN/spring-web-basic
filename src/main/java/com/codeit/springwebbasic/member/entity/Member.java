@@ -1,6 +1,11 @@
 package com.codeit.springwebbasic.member.entity;
 
 import java.time.LocalDateTime;
+import lombok.*;
+
+@Getter @Setter @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 
 public class Member {
 

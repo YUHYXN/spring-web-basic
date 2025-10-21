@@ -1,6 +1,7 @@
 package com.codeit.springwebbasic.book.repository;
 
 import com.codeit.springwebbasic.book.entity.Book;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+@Repository
 public class BookRepository {
 
     // 웹 어플리케이션은 동시에 여러 요청이 한꺼번에 들어올 수 있기 때문에
@@ -39,6 +41,15 @@ public class BookRepository {
     public Optional<Book> findById(Long id) {
         return Optional.ofNullable(store.get(id));
     }   // 옵셔널이 있어서 굳이 내가 if 문으로 null 체크를 하지 않아도 된다.
+
+
+    // ISBN으로 조회
+    public Optional<Book> findByIsbn(String isbn) {
+        return store.values().stream()
+                .filter(book -> book.getIsbn().equals(isbn))
+                .findFirst();
+    }
+
 
     // 메서드 선언할 때 리턴 타입 일단 잘 모르겠으면 void
     public List<Book> findByTitleContaining(String title) {   // 해당 title이 포함된 도서만 조회
