@@ -1,6 +1,6 @@
 package com.codeit.springwebbasic.book.service;
 
-import com.codeit.springwebbasic.book.dto.request.BookCreatRequestDto;
+import com.codeit.springwebbasic.book.dto.request.BookCreateRequestDto;
 import com.codeit.springwebbasic.book.entity.Book;
 import com.codeit.springwebbasic.book.entity.BookStatus;
 import com.codeit.springwebbasic.book.repository.BookRepository;
@@ -13,31 +13,33 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BookService {
 
+    private final BookRepository bookRepository;
 
-    private BookRepository bookRepository;
-
-    public Book createBook(BookCreatRequestDto requestDto) {
-        // ISBN 중복 검사
+    public Book createBook(BookCreateRequestDto requestDto) {
+        // ISBN 중복 체크
         Optional<Book> byIsbn = bookRepository.findByIsbn(requestDto.getIsbn());
-        if(byIsbn.isPresent()) {
-            throw new IllegalArgumentException("이미 등록된 ISBN입니다." + requestDto.getIsbn() ); // 에러 던지기
+        if (byIsbn.isPresent()) {
+            throw new IllegalArgumentException("이미 등록된 ISBN입니다: " + requestDto.getIsbn());
         }
 
-
-
-        // AllArgsConstructor가 있어서 하나하나 생성자 만들 필요 없음
-        // @Builder 어노테이션 덕분에 빌더 패턴으로 객체 생성 가능
-        // Builder 패턴을 활용하면 초기화 순서를 내 마음대로 지정해도 상관 없고,
-
+        // Builder 패턴을 활용하면 초기화 순서를 내 맘대로 지정해도 상관 없고,
+        // 원하는 필드만 골라서 초기화 하는것이 가능.
         Book book = Book.builder()
-                .title(requestDto.getTitle())
+                .status(BookStatus.AVAILABLE)
                 .author(requestDto.getAuthor())
                 .isbn(requestDto.getIsbn())
+                .title(requestDto.getTitle())
                 .publisher(requestDto.getPublisher())
                 .publishedDate(requestDto.getPublishedDate())
-                .status(BookStatus.AVAILABEL)
                 .build();
 
-        bookRepository.save();
+        return bookRepository.save(book);
+    }
+
+    public Book getBook(Long id) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("도서를 찾을 수 없습니다."));
+
+        return book;
     }
 }

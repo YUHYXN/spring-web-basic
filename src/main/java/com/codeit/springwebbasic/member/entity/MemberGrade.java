@@ -13,11 +13,12 @@ public enum MemberGrade {
     }
 
     public MemberGrade upgrade() {
+        // 새로운 switch 표현식
         return switch (this) {
             case BRONZE -> SILVER;
             case SILVER -> GOLD;
             case GOLD -> PLATINUM;
-            case PLATINUM -> PLATINUM; // PLATINUM 등급은 유지
+            case PLATINUM -> PLATINUM;
         };
     }
 

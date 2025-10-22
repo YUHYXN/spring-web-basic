@@ -1,51 +1,43 @@
 package com.codeit.springwebbasic.book.controller;
 
-import com.codeit.springwebbasic.book.dto.request.BookCreatRequestDto;
+import com.codeit.springwebbasic.book.dto.request.BookCreateRequestDto;
 import com.codeit.springwebbasic.book.dto.response.BookResponseDto;
 import com.codeit.springwebbasic.book.entity.Book;
-import com.codeit.springwebbasic.book.repository.BookRepository;
 import com.codeit.springwebbasic.book.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
-
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequiredArgsConstructor
+@RequiredArgsConstructor // final 변수를 초기화 하는 매개값을 전달받는 생성자.
 public class BookController {
 
     private final BookService bookService;
 
     /*
-     * {
-     *   "title": string,
-     *   "author": string,
-     *   "isbn": string,
-     *   "publisher": string,
-     *   "publishedDate": date (= LocalDate),
-     * }
-     *
-     * */
-    public BookResponseDto createBook(@Valid @RequestBody BookCreatRequestDto requestDto) {
-
+    도서 등록
+     {
+        "title": string,
+        "author": string,
+        "isbn": string,
+        "publisher": string,
+        "publishedDate": date
+     }
+     */
+    @RequestMapping(value = "/api/books", method = RequestMethod.POST)
+    public BookResponseDto createBook(@Valid @RequestBody BookCreateRequestDto requestDto) {
         Book book = bookService.createBook(requestDto);
         return BookResponseDto.from(book);
-
     }
 
     // 조회 요청
-    // Url : localhost:8080/books
-    // 메서드 이름 : getBooks
+    // url: localhost:8081/api/books/책id: GET
+    // 메서드 이름: getBook
     @GetMapping("/api/books/{id}")
-    public void getBooks(Long id){
-        Book book = BookRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("해당 도서가 없습니다. id=" + id) );
+    public BookResponseDto getBook(@PathVariable Long id) {
+        Book book = bookService.getBook(id);
+        return BookResponseDto.from(book);
     }
 
-    }
 
 }

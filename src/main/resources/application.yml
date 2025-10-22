@@ -1,0 +1,6 @@
+spring:
+  application:
+    name=spring-web-basic
+
+server:
+  port: 8081

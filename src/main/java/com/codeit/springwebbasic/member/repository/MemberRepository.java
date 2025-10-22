@@ -2,6 +2,7 @@ package com.codeit.springwebbasic.member.repository;
 
 import com.codeit.springwebbasic.member.entity.Member;
 import com.codeit.springwebbasic.member.entity.MemberGrade;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,15 +12,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+@Repository
 public class MemberRepository {
+
     private final Map<Long, Member> store = new ConcurrentHashMap<>();
     private final AtomicLong sequence = new AtomicLong(1);
 
     // 회원 저장
     public Member save(Member member) {
-//        if(member.getId() == null){
-//            member.setId(sequence.getAndIncrement()); // 값을 얻고난 후 값을 하나 증가
-//        }
+        if (member.getId() == null) {
+            member.setId(sequence.getAndIncrement());
+        }
         store.put(member.getId(), member);
         return member;
     }
@@ -32,7 +35,7 @@ public class MemberRepository {
     // email로 회원 조회
     public Optional<Member> findByEmail(String email) {
         return store.values().stream()
-                .filter(member -> email.equals(member.getEmail())) // NPE 안전 비교
+                .filter(member -> member.getEmail().equals(email))
                 .findFirst();
     }
 
@@ -70,4 +73,16 @@ public class MemberRepository {
     public void clear() {
         store.clear();
     }
+
+
 }
+
+
+
+
+
+
+
+
+
+
