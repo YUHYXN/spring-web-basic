@@ -20,8 +20,8 @@ public class RentalResponseDto {
     private LocalDateTime returnedAt;
     private boolean overdue;
 
-    public static RentalResponse from(Rental rental) {
-        return RentalResponse.builder()
+    public static RentalResponseDto from(Rental rental) {
+        return RentalResponseDto.builder()
                 .id(rental.getId())
                 .memberId(rental.getMember().getId())
                 .memberName(rental.getMember().getName())
@@ -33,4 +33,5 @@ public class RentalResponseDto {
                 .overdue(rental.isOverdue())
                 .build();
     }
+
 }
