@@ -4,6 +4,7 @@ import com.codeit.springwebbasic.book.entity.Book;
 import com.codeit.springwebbasic.book.repository.BookRepository;
 import com.codeit.springwebbasic.member.entity.Member;
 import com.codeit.springwebbasic.member.repository.MemberRepository;
+import com.codeit.springwebbasic.notification.NotificationDispatcher;
 import com.codeit.springwebbasic.notification.NotificationService;
 import com.codeit.springwebbasic.rental.entity.Rental;
 import com.codeit.springwebbasic.rental.entity.RentalRepository;
@@ -19,7 +20,8 @@ public class RentalService {
     private final BookRepository bookRepository;
     private final MemberRepository memberRepository;
     private final RentalRepository rentalRepository;
-    private final NotificationService notificationService;  // Primary로 지정된 구현체가 주입된다.
+//    private final NotificationService notificationService;  // Primary로 Console 주입
+    private final NotificationDispatcher notificationDispatcher;
 
     public Rental rentBook(Long memberId, Long bookId) {
 
@@ -49,7 +51,9 @@ public class RentalService {
             rental.getDueDate().toLocalDate()
         );
 
-        notificationService.sendNotification(member.getName(), message);
+//        notificationService.sendNotification(member.getName(), message);
+        notificationDispatcher.broadcast(member.getName(), message);
+
         return saved;
 
 
