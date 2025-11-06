@@ -1,5 +1,6 @@
 package com.codeit.springwebbasic.common.exception;
 
+import com.codeit.springwebbasic.common.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -20,10 +21,11 @@ public class CommonExceptionHandler {
     // 메서드를 호출한 상위 계층으로 전파됩니다.
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<?> illegalArgsHandler(IllegalArgumentException e) {
+    public ResponseEntity<ApiResponse<Object>> illegalArgsHandler(IllegalArgumentException e) {
         e.printStackTrace();
         // 예외의 원인을 http 상태 코드와 메세지를 통해 알려주고 싶다. -> ResponseEntity
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        ApiResponse<Object> response = ApiResponse.error("ILLEGAL_ARGS", e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IllegalStateException.class)
@@ -34,23 +36,24 @@ public class CommonExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> methodArgumentNotValidHandler(MethodArgumentNotValidException e) {
+    public ResponseEntity<?> methodArgsNotValidHandler(MethodArgumentNotValidException e) {
         e.printStackTrace();
 
-        // 1. 오류 결과를 담을 Map 생성 합니다. (Key: 필드명, Value: 오류메시지)
+        // 1. 오류 결과를 담을 Map을 생성합니다. (Key: 필드명, Value: 에러 메세지)
         Map<String, String> errors = new HashMap<>();
 
-        // BindingResult : 오류 결과 보고서
+        /*
+        // BindingResult: 오류 결과 보고서
         BindingResult bindingResult = e.getBindingResult();
 
-        // bindingResult에서 @valid 검증에 실패한 필드 목록을 가져옵니다.
-//        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-//        for (FieldError error : fieldErrors) {
-//            String field = error.getField();
-//            String message = error.getDefaultMessage();
-//            errors.put(field, message);
-//        }
-
+        // BindingResult에서 @Valid에 실패한 필드 목록을 불러옵니다.
+        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+        for (FieldError error : fieldErrors) {
+            String field = error.getField();
+            String message = error.getDefaultMessage();
+            errors.put(field, message);
+        }
+        */
         e.getBindingResult().getFieldErrors().forEach(error -> {
             String field = error.getField();
             String message = error.getDefaultMessage();
