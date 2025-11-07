@@ -24,7 +24,7 @@ public class CommonExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<Object>> illegalArgsHandler(IllegalArgumentException e) {
-        // log.error()를 사용해서 예외 객체를 전달하면 스택 트레이스를 모두 찍어준다.
+        // log.error를 사용해서 예외 객체를 전달하면 스택 트레이스를 모두 찍어 줍니다.
         log.error(e.getMessage(), e);
         // 예외의 원인을 http 상태 코드와 메세지를 통해 알려주고 싶다. -> ResponseEntity
         ApiResponse<Object> response = ApiResponse.error("ILLEGAL_ARGS", e.getMessage());
@@ -33,14 +33,14 @@ public class CommonExceptionHandler {
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<?> illegalStateHandler(IllegalStateException e) {
-        e.printStackTrace();
+        log.error(e.getMessage(), e);
         // 예외의 원인을 http 상태 코드와 메세지를 통해 알려주고 싶다. -> ResponseEntity
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> methodArgsNotValidHandler(MethodArgumentNotValidException e) {
-        e.printStackTrace();
+        log.error(e.getMessage(), e);
 
         // 1. 오류 결과를 담을 Map을 생성합니다. (Key: 필드명, Value: 에러 메세지)
         Map<String, String> errors = new HashMap<>();
@@ -71,7 +71,7 @@ public class CommonExceptionHandler {
     // 미처 준비하지 못한 타입의 예외가 발생했을 시 처리할 메서드
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> exceptionHandler(Exception e) {
-        e.printStackTrace();
+        log.error(e.getMessage(), e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

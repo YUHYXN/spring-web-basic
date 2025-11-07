@@ -3,7 +3,6 @@ package com.codeit.springwebbasic.member.controller;
 import com.codeit.springwebbasic.common.dto.ApiResponse;
 import com.codeit.springwebbasic.member.dto.request.MemberCreateRequestDto;
 import com.codeit.springwebbasic.member.dto.response.MemberResponseDto;
-import com.codeit.springwebbasic.member.entity.Member;
 import com.codeit.springwebbasic.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,11 +25,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/members")
 @RequiredArgsConstructor
-@Slf4j
-public class MemberController {
+@Slf4j // log 라는 이름의 Logger 객체를 바로 생성.
+public class MemberController implements MemberControllerDocs {
 
     private final MemberService memberService;
-//    private final Logger logger = LoggerFactory.getLogger(MemberController.class);
+//    private final Logger log = LoggerFactory.getLogger(MemberController.class);
 
     // 회원 가입
     // url: /api/members: POST
@@ -40,13 +39,9 @@ public class MemberController {
     // 응답: id, name, email, phone, grade, joinedAt
     // 상태 코드: 201 CREATED
     @PostMapping
-
     public ResponseEntity<ApiResponse<MemberResponseDto>> createMember(
-
-        @Parameter(description = "회원 가입 요청 DTO", required = true)
             @Valid @RequestBody MemberCreateRequestDto requestDto) {
-        log.info("/api/v1/member: POST, dto: {}", requestDto);
-
+        log.info("/api/v1/members: POST, dto: {}", requestDto);
         MemberResponseDto responseDto = memberService.createMember(requestDto);
 
         ApiResponse<MemberResponseDto> response = ApiResponse.success(responseDto);
@@ -62,7 +57,7 @@ public class MemberController {
         MemberResponseDto member = memberService.getMember(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(member)); // 일관된 응답을 주기 위해 ApiResponse 사용(RESTful API 설계 원칙 준수)
+                .body(ApiResponse.success(member));
     }
 
     // 전체 회원 조회 & 검색
@@ -71,16 +66,15 @@ public class MemberController {
     // 비즈니스로직: 각 상황에 맞는 Service 메서드를 호출해서 리턴.
     // 응답: 조회된 회원(Response DTO)을 리스트에 담아서 리턴 | 200 OK
     @GetMapping
-    public ResponseEntity<List<MemberResponseDto>> getMembers(
+    public ResponseEntity<ApiResponse<List<MemberResponseDto>>> getMembers(
             @RequestParam(required = false) String name
     ) {
 
+        List<MemberResponseDto> members
+                = name != null
+                ? memberService.searchMembers(name) : memberService.getAllMembers();
 
-        List<MemberResponseDto> members =
-                name != null ?
-                        memberService.searchMembers(name) : memberService.getAllMembers();
-
-        return ResponseEntity.ok(ApiResponse.success(members).getData());
+        return ResponseEntity.ok(ApiResponse.success(members));
     }
 
 
