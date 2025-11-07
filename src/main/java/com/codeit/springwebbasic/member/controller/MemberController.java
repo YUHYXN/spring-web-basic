@@ -5,6 +5,13 @@ import com.codeit.springwebbasic.member.dto.request.MemberCreateRequestDto;
 import com.codeit.springwebbasic.member.dto.response.MemberResponseDto;
 import com.codeit.springwebbasic.member.entity.Member;
 import com.codeit.springwebbasic.member.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +40,10 @@ public class MemberController {
     // 응답: id, name, email, phone, grade, joinedAt
     // 상태 코드: 201 CREATED
     @PostMapping
+
     public ResponseEntity<ApiResponse<MemberResponseDto>> createMember(
 
+        @Parameter(description = "회원 가입 요청 DTO", required = true)
             @Valid @RequestBody MemberCreateRequestDto requestDto) {
         log.info("/api/v1/member: POST, dto: {}", requestDto);
 
@@ -65,6 +74,8 @@ public class MemberController {
     public ResponseEntity<List<MemberResponseDto>> getMembers(
             @RequestParam(required = false) String name
     ) {
+
+
         List<MemberResponseDto> members =
                 name != null ?
                         memberService.searchMembers(name) : memberService.getAllMembers();
