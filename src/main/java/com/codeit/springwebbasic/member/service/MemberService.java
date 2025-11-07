@@ -1,22 +1,26 @@
 package com.codeit.springwebbasic.member.service;
 
 import com.codeit.springwebbasic.member.dto.request.MemberCreateRequestDto;
+import com.codeit.springwebbasic.member.dto.response.MemberResponseDto;
 import com.codeit.springwebbasic.member.entity.Member;
 import com.codeit.springwebbasic.member.entity.MemberGrade;
 import com.codeit.springwebbasic.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    public Member createMember(MemberCreateRequestDto requestDto) {
+    public MemberResponseDto createMember(MemberCreateRequestDto requestDto) {
 
         // 이메일 중복 체크
         if (memberRepository.existsByEmail(requestDto.email())) {
@@ -31,20 +35,37 @@ public class MemberService {
                 .joinedAt(LocalDateTime.now())
                 .build();
 
-        return memberRepository.save(member);
+        Member saved = memberRepository.save(member);
+        return MemberResponseDto.from(member);
 
     }
 
-    public Member getMember(Long id) {
-        return memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다: " + id));
+    public MemberResponseDto getMember(Long id) {
+        Member member = memberRepository.findById(id)    // 만약에 없다면 예외를 발생시켜라
+                .orElseThrow(() -> {
+                    log.warn("회원을 찾을 수 없습니다: {}", id);
+                    return new IllegalArgumentException("회원을 찾을 수 없습니다: " + id);
+                });
+
+        log.info("찾은 회원: {}", member);
+
+        return MemberResponseDto.from(member);  // Entity -> ResponseDto 변환 Service에서 할 수 있는건 서비스에서 하자
     }
 
-    public List<Member> searchMembers(String name) {
-        return memberRepository.findByNameContaining(name);
+    public List<MemberResponseDto> searchMembers(String name) {
+        List<Member> memberList = memberRepository.findByNameContaining(name);
+        return getMemberResponseDtos(memberList);
     }
 
-    public List<Member> getAllMembers() {
-        return memberRepository.findAll();
+    public List<MemberResponseDto> getAllMembers() {
+        List<Member> memberList = memberRepository.findAll();
+        return getMemberResponseDtos(memberList);
+    }
+
+    // 동일한 메서드 추출해서 바꾸기 static 필요 없어서 지움 구분을 주기위해서 private은 밑으로 내렸음
+    private List<MemberResponseDto> getMemberResponseDtos(List<Member> memberList) {
+        return memberList.stream()
+                .map(MemberResponseDto::from)
+                .collect(Collectors.toList());
     }
 }

@@ -5,3 +5,9 @@ spring:
 server:
   port: 8081
 
+logging:
+  level:  # LogExample 클래스의 로그 레벨을 asap으로 설정 기본 값은 INFO 직접 레벨 지정
+    com.codeit.springwebbasic.common.log.LogExample: debug
+    org.springframework.web: warn # Spring패키지 Web 관련 로그 레벨을 WARN으로 설정하고싶다.
+  file:
+    name: /Users/milk/Desktop/Codeit-7th-develop/logs/app.log
